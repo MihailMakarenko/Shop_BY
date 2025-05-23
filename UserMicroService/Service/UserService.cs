@@ -10,18 +10,7 @@ namespace Service
 {
     public class UserService(IRepositoryManager _repositoryManager, IMapper _mapper) : IUserService
     {
-        public async Task<UserDto> RegisterUser(UserForCreationDto userForCreation)
-        {
-            var userEntity = _mapper.Map<User>(userForCreation);
-
-            _repositoryManager.UserRepository.CreateUser(userEntity);
-            await _repositoryManager.SaveAsync();
-
-            var userToReturn = _mapper.Map<UserDto>(userEntity);
-
-            return userToReturn;
-        }
-
+   
         public async Task DeleteUser(Guid userId, bool trackChanges)
         {
             var user = await GetAndCheckUserIfExists(userId, trackChanges);
@@ -72,19 +61,5 @@ namespace Service
             return userEntity;
         }
 
-        public Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TokenDto> CreateToken(bool populateExp)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<TokenDto> RefreshToken(TokenDto tokenDto)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

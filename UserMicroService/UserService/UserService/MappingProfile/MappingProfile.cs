@@ -8,12 +8,10 @@ namespace UserService.MappingProfile
     {
         public MappingProfile()
         {
-
-            CreateMap<User, UserDto>();
+            CreateMap<User, UserDto>().ForMember(u => u.FullName, opt => opt.MapFrom(x => $"{x.FirstName} {x.LastName}"));
             CreateMap<UserForCreationDto, UserDto>();
             CreateMap<UserForUpdateDto, UserDto>();
             CreateMap<UserForCreationDto, User>();
-
         }
     }
 }

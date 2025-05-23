@@ -40,6 +40,7 @@ namespace Service
             _jwtConfiguration = _configuration.Value;
             _repositoryManager = repositoryManager;
         }
+
         public async Task<IdentityResult> RegisterUser(UserForCreationDto userForRegistrartion)
         {
             var user = _mapper.Map<User>(userForRegistrartion);
