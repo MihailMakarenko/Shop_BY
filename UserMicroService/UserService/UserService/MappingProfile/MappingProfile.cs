@@ -12,6 +12,7 @@ namespace UserService.MappingProfile
             CreateMap<User, UserDto>();
             CreateMap<UserForCreationDto, UserDto>();
             CreateMap<UserForUpdateDto, UserDto>();
+            CreateMap<UserForCreationDto, User>();
 
         }
     }

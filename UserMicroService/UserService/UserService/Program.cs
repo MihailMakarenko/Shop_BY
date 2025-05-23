@@ -14,6 +14,8 @@ namespace UserService
             //// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             //builder.Services.AddOpenApi();
 
+            builder.Services.AddControllers().AddApplicationPart(typeof(UserService.Presentation.AssemblyReference).Assembly);
+
             // Configure additional services
             builder.Services.ConfigureCors();
             builder.Services.ConfigureIISIntegration();
