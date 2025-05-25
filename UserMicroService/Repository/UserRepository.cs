@@ -1,12 +1,15 @@
 ﻿using Contracts;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace Repository
 {
     public class UserRepository : RepositoryBase<User>, IUserRepository
     {
         public UserRepository(AppDbContext context) : base(context) { }
+
+    
 
         public void CreateUser(User user)
         {
@@ -26,6 +29,11 @@ namespace Repository
         public async Task<User?> GetUserAsync(Guid id, bool trackChanges)
         {
             return await FindByCondition(u => u.Id.Equals(id.ToString()), trackChanges).SingleOrDefaultAsync();
+        }
+
+        public async Task<User?> GetUserByEmail(string email, bool trackChanges)
+        {
+            return await FindByCondition(u => u.NormalizedEmail!.Equals(email.ToUpper()), trackChanges).SingleOrDefaultAsync();
         }
     }
 }

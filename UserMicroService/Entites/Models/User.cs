@@ -11,5 +11,17 @@ namespace Entities.Models
         public string? Role { get; set; }
         public string? RefreshToken { get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }
+        public string? EmailConfirmToken { get; set; }
+
+        [NotMapped]
+        public override bool TwoFactorEnabled { get; set; }
+        [NotMapped]
+        public override DateTimeOffset? LockoutEnd { get; set; }
+        [NotMapped]
+        public override bool PhoneNumberConfirmed { get; set; }
+        [NotMapped]
+        public override int AccessFailedCount { get; set; }
+        public string? ResetPasswordToken { get; set; }
+        public DateTime? ResetPasswordTokenExpiry { get; set; }
     }
 }

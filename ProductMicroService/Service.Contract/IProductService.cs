@@ -1,12 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Shared.DataTransferObjects.ProductDto;
 
 namespace Service.Contract
 {
-    internal class IProductService
+    public interface IProductService
     {
+        Task<IEnumerable<ProductDto>> GetAllProducts(bool trackChagnes);
+        Task<ProductDto> GetProductByUserAsync(Guid id, Guid userId, bool trackChanges);
+        Task<IEnumerable<ProductDto>> GetProductsByUserAsync(Guid userId, bool trackChanges);
+        Task<ProductDto> CreateProductForUser(Guid userId, ProductForCreationDto productForCreation, bool trackChanges);
+        Task DeleteProductForUser(Guid id, Guid userId, bool trackChanges);
+        Task UpdateProductForUser(Guid id, Guid userId, ProductForUpdateDto productForUpdate,bool trackChagnes);
     }
 }

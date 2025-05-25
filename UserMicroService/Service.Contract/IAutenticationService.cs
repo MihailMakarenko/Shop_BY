@@ -10,9 +10,11 @@ namespace Service.Contract
 {
     public interface IAutenticationService
     {
-        Task<IdentityResult> RegisterUser(UserForCreationDto userForCreation);
-        Task<bool> ValidateUser(UserForAuthenticationDto userForAuth);
+        Task<IdentityResult> RegisterUser(UserForCreationDto userForCreation, string emailToken);
+        Task<bool> LoginUser(UserForAuthenticationDto userForAuth);
         Task<TokenDto> CreateToken(bool populateExp);
         Task<TokenDto> RefreshToken(TokenDto tokenDto);
+
+        //string GenerateToken();
     }
 }

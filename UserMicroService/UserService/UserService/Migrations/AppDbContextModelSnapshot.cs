@@ -27,9 +27,6 @@ namespace UserService.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("AccessFailedCount")
-                        .HasColumnType("int");
-
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
@@ -38,6 +35,9 @@ namespace UserService.Migrations
                         .IsRequired()
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("EmailConfirmToken")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("bit");
@@ -54,9 +54,6 @@ namespace UserService.Migrations
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
-
-                    b.Property<DateTimeOffset?>("LockoutEnd")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<string>("NormalizedEmail")
                         .IsRequired()
@@ -76,9 +73,6 @@ namespace UserService.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<bool>("PhoneNumberConfirmed")
-                        .HasColumnType("bit");
-
                     b.Property<string>("RefreshToken")
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
@@ -86,14 +80,17 @@ namespace UserService.Migrations
                     b.Property<DateTime>("RefreshTokenExpiryTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("ResetPasswordToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResetPasswordTokenExpiry")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("TwoFactorEnabled")
-                        .HasColumnType("bit");
 
                     b.Property<string>("UserName")
                         .HasMaxLength(256)
@@ -123,7 +120,6 @@ namespace UserService.Migrations
                         new
                         {
                             Id = "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",
-                            AccessFailedCount = 0,
                             ConcurrencyStamp = "60bdd23a-6978-4d86-bcf0-6daa2f026a59",
                             Email = "ivanov@example.com",
                             EmailConfirmed = false,
@@ -134,16 +130,13 @@ namespace UserService.Migrations
                             NormalizedUserName = "IVANOV@EXAMPLE.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAENYUiMMwEz6mK7Q9UngGzqZcmbadl27fTu/Vl2sSZxzVO6gg8eiFojVEgpwhWrW5/Q==",
                             PhoneNumber = "+79161234567",
-                            PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "5b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            TwoFactorEnabled = false,
                             UserName = "ivanov@example.com"
                         },
                         new
                         {
                             Id = "b5c6d7e8-f9a0-4b1c-8d2e-3f4a5b6c7d8e",
-                            AccessFailedCount = 0,
                             ConcurrencyStamp = "70bdd23a-6978-4d86-bcf0-6daa2f026a59",
                             Email = "petrov@example.com",
                             EmailConfirmed = false,
@@ -154,16 +147,13 @@ namespace UserService.Migrations
                             NormalizedUserName = "PETROV@EXAMPLE.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAEJ+QzS07ERg3xayKLU6rkLlNVDviOGgbhjRIyC/z+ymKf9iZDbcONU6W+auKqmW8/A==",
                             PhoneNumber = "+79162345678",
-                            PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "6b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            TwoFactorEnabled = false,
                             UserName = "petrov@example.com"
                         },
                         new
                         {
                             Id = "c9d8e7f6-5a4b-3c2d-1e0f-9a8b7c6d5e4f",
-                            AccessFailedCount = 0,
                             ConcurrencyStamp = "80bdd23a-6978-4d86-bcf0-6daa2f026a59",
                             Email = "sergeev@example.com",
                             EmailConfirmed = false,
@@ -174,16 +164,13 @@ namespace UserService.Migrations
                             NormalizedUserName = "SERGEEV@EXAMPLE.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAEBqikCOKD76Hxo7mmGNse297oJ8qvLFj1gCsI4AiiB6FyqVDWYOfKepCBaX1/4deSw==",
                             PhoneNumber = "+79163456789",
-                            PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "7b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            TwoFactorEnabled = false,
                             UserName = "sergeev@example.com"
                         },
                         new
                         {
                             Id = "d4e5f6a7-b8c9-4d0e-1f2a-3b4c5d6e7f8a",
-                            AccessFailedCount = 0,
                             ConcurrencyStamp = "90bdd23a-6978-4d86-bcf0-6daa2f026a59",
                             Email = "andreeva@example.com",
                             EmailConfirmed = false,
@@ -194,16 +181,13 @@ namespace UserService.Migrations
                             NormalizedUserName = "ANDREEVA@EXAMPLE.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAEBZu/3FjMApsOJ+8UfgKD2Mg1gi7e++9FrG0sMm+PQDh9iI7H21OtfB4vn4T0/EKzA==",
                             PhoneNumber = "+79164567890",
-                            PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "8b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            TwoFactorEnabled = false,
                             UserName = "andreeva@example.com"
                         },
                         new
                         {
                             Id = "e3f4a5b6-c7d8-4e9f-0a1b-2c3d4e5f6a7b",
-                            AccessFailedCount = 0,
                             ConcurrencyStamp = "10bdd23a-6978-4d86-bcf0-6daa2f026a59",
                             Email = "mihailova@example.com",
                             EmailConfirmed = false,
@@ -214,16 +198,13 @@ namespace UserService.Migrations
                             NormalizedUserName = "MIHAILOVA@EXAMPLE.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAEIpil4qB2u3lrsM9lWAhe69Fyl6oB3JVILqtlbmCDrRl6slMntV7C1w8A9JOp73uFg==",
                             PhoneNumber = "+79165678901",
-                            PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "9b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            TwoFactorEnabled = false,
                             UserName = "mihailova@example.com"
                         },
                         new
                         {
                             Id = "f2a3b4c5-d6e7-4f8a-9b0c-1d2e3f4a5b6c",
-                            AccessFailedCount = 0,
                             ConcurrencyStamp = "20bdd23a-6978-4d86-bcf0-6daa2f026a59",
                             Email = "alekseev@example.com",
                             EmailConfirmed = false,
@@ -234,16 +215,13 @@ namespace UserService.Migrations
                             NormalizedUserName = "ALEKSEEV@EXAMPLE.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAEOTu1amo3Go+posodIMBkdR1AfnYnFEiCru/z0WP008MVwp6UvZJPQf0UsvMCDhbVg==",
                             PhoneNumber = "+79166789012",
-                            PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "0c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            TwoFactorEnabled = false,
                             UserName = "alekseev@example.com"
                         },
                         new
                         {
                             Id = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d",
-                            AccessFailedCount = 0,
                             ConcurrencyStamp = "30bdd23a-6978-4d86-bcf0-6daa2f026a59",
                             Email = "olegova@example.com",
                             EmailConfirmed = false,
@@ -254,16 +232,13 @@ namespace UserService.Migrations
                             NormalizedUserName = "OLEGOVA@EXAMPLE.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAENYUiMMwEz6mK7Q9UngGzqZcmbadl27fTu/Vl2sSZxzVO6gg8eiFojVEgpwhWrW5/Q==",
                             PhoneNumber = "+79167890123",
-                            PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "1c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            TwoFactorEnabled = false,
                             UserName = "olegova@example.com"
                         },
                         new
                         {
                             Id = "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e",
-                            AccessFailedCount = 0,
                             ConcurrencyStamp = "40bdd23a-6978-4d86-bcf0-6daa2f026a59",
                             Email = "dmitriev@example.com",
                             EmailConfirmed = false,
@@ -274,16 +249,13 @@ namespace UserService.Migrations
                             NormalizedUserName = "DMITRIEV@EXAMPLE.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAEJ+QzS07ERg3xayKLU6rkLlNVDviOGgbhjRIyC/z+ymKf9iZDbcONU6W+auKqmW8/A==",
                             PhoneNumber = "+79168901234",
-                            PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "2c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            TwoFactorEnabled = false,
                             UserName = "dmitriev@example.com"
                         },
                         new
                         {
                             Id = "3c4d5e6f-7a8b-4c9d-0e1f-2a3b4c5d6e7f",
-                            AccessFailedCount = 0,
                             ConcurrencyStamp = "50bdd23a-6978-4d86-bcf0-6daa2f026a59",
                             Email = "evgenevna@example.com",
                             EmailConfirmed = false,
@@ -294,16 +266,13 @@ namespace UserService.Migrations
                             NormalizedUserName = "EVGENEVNA@EXAMPLE.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAEBqikCOKD76Hxo7mmGNse297oJ8qvLFj1gCsI4AiiB6FyqVDWYOfKepCBaX1/4deSw==",
                             PhoneNumber = "+79169012345",
-                            PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "3c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            TwoFactorEnabled = false,
                             UserName = "evgenevna@example.com"
                         },
                         new
                         {
                             Id = "4d5e6f7a-8b9c-4d0e-1f2a-3b4c5d6e7f8a",
-                            AccessFailedCount = 0,
                             ConcurrencyStamp = "60bdd23a-6978-4d86-bcf0-6daa2f026a59",
                             Email = "nikolaev@example.com",
                             EmailConfirmed = false,
@@ -314,10 +283,8 @@ namespace UserService.Migrations
                             NormalizedUserName = "NIKOLAEV@EXAMPLE.COM",
                             PasswordHash = "AQAAAAIAAYagAAAAECd8g4VY+JRSDLpo4qHrBTqylzzbNEqISXuZM8tfI9PIlgSYASY2AEcTdinQQCj64w==",
                             PhoneNumber = "+79160123456",
-                            PhoneNumberConfirmed = false,
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "4c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            TwoFactorEnabled = false,
                             UserName = "nikolaev@example.com"
                         });
                 });

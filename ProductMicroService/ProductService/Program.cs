@@ -1,4 +1,7 @@
 
+using Microsoft.Extensions.Logging;
+using ProductService.DI;
+
 namespace ProductService
 {
     public class Program
@@ -7,42 +10,40 @@ namespace ProductService
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
-            builder.Services.AddAuthorization();
+            builder.Services.ConfigureRepositoryManager();
+            builder.Services.ConfigureServiceManager();
+            builder.Services.AddAutoMapper(typeof(Program));
 
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+            builder.Services.AddControllers()
+                .AddNewtonsoftJson()
+                .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
 
+            //builder.Services.ConfigureIdentity();
+            builder.Services.ConfigureJWT(builder.Configuration);
+
+
+            builder.Services.ConfigureCors();
+            builder.Services.ConfigureIISIntegration();
+            builder.Services.ConfigureSqlContext(builder.Configuration);
+
+            builder.Services.AddEndpointsApiExplorer();
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+            app.ConfigureExceptionHandler();
+
             if (app.Environment.IsDevelopment())
             {
-                app.MapOpenApi();
+                app.UseDeveloperExceptionPage();
             }
 
             app.UseHttpsRedirection();
+            app.UseRouting();
 
+            app.UseCors("CorsPolicy");
+            app.UseAuthentication();
             app.UseAuthorization();
 
-            var summaries = new[]
-            {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
-
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast
-                    {
-                        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        Summary = summaries[Random.Shared.Next(summaries.Length)]
-                    })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast");
+            app.MapControllers();
 
             app.Run();
         }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entites.Exceptions;
+using Entites.Exceptions.UsersException;
 using Entities.Exceptions.UsersException;
 using Entities.Models;
 using Service.Contract;
@@ -18,6 +19,21 @@ namespace Service
             _repositoryManager.UserRepository.DeleteUser(user);
             await _repositoryManager.SaveAsync();
         }
+
+        public Task<UserDto> GetUserByEmail(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        //public async Task<UserDto> GetUserByEmail(string email, bool trackChanges)
+        //{
+        //    var user = await _repositoryManager.UserRepository.GetUserByEmail(email, trackChanges);
+
+        //    if (user == null)
+        //        throw new UserNotFoundByEmailException(email);
+
+        //    var userDto = _mapper
+        //}
 
         public async Task<UserDto> GetUserById(Guid id, bool trackChanges)
         {

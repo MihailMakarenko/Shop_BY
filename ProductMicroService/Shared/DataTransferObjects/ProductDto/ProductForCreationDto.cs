@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace Shared.DataTransferObjects.ProductDto
 {
-    internal class ProductForCreationDto
+    public record ProductForCreationDto
     {
+        public string? Name { get; set; }
+        public string? Description { get; set; }
+        public decimal Price { get; set; }
     }
 }

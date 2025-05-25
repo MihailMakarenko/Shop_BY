@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace Service.Contract
 {
-    internal class IServiceManager
+    public interface IServiceManager
     {
+        IProductService ProductService { get; }
     }
 }

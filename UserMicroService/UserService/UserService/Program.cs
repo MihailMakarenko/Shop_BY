@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using UserService.DI;
 
 namespace UserService
@@ -25,9 +26,9 @@ namespace UserService
             builder.Services.ConfigureSqlContext(builder.Configuration);
 
             builder.Services.AddEndpointsApiExplorer();
-          
-
             var app = builder.Build();
+
+            app.ConfigureExceptionHandler();
 
             if (app.Environment.IsDevelopment())
             {

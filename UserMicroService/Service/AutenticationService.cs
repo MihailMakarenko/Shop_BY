@@ -7,14 +7,10 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Contract;
 using Shared.DataTransferObjects.UserDto;
-using System;
-using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Service
 {
@@ -41,13 +37,15 @@ namespace Service
             _repositoryManager = repositoryManager;
         }
 
-        public async Task<IdentityResult> RegisterUser(UserForCreationDto userForRegistrartion)
+        public async Task<IdentityResult> RegisterUser(UserForCreationDto userForRegistrartion, string emailToken)
         {
             var user = _mapper.Map<User>(userForRegistrartion);
-
+            user.EmailConfirmToken = emailToken;
             // Checking the existence of a phone
 
+
             var result = await _userManager.CreateAsync(user, userForRegistrartion.Password!);
+
 
             if (result.Succeeded)
                 await AddToRolesIfExist(user, userForRegistrartion);
@@ -86,13 +84,13 @@ namespace Service
         }
 
 
-        public async Task<bool> ValidateUser(UserForAuthenticationDto userForAuth)
+        public async Task<bool> LoginUser(UserForAuthenticationDto userForAuth)
         {
             _user = await _userManager.FindByEmailAsync(userForAuth.UserName!);
 
             var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password!));
             //if (!result)
-            //    _logger.LogWarn($"{nameof(ValidateUser)}: Authentication failed. Wrong user name or password.");
+            //    _logger.LogWarn($"{nameof(LoginUser)}: Authentication failed. Wrong user name or password.");
 
             return result;
         }
@@ -202,8 +200,11 @@ namespace Service
             return principal;
         }
 
-       
-        
+        //public string GenerateToken() => Guid.NewGuid().ToString();
+
+
+
+
         //private async Task CheckIfExistUserPhoneNumber(User user)
         //{
         //    if (await _repositoryManager.User.IsPhoneNumberTakenAsync(user.PhoneNumber!, trackChanges: false))
