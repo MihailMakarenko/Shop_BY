@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Contracts;
+using Entites.Exceptions;
+using Entites.Exceptions.UsersException;
 using Entities.Exceptions;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Contract;
@@ -14,7 +17,7 @@ using System.Text;
 
 namespace Service
 {
-    public class AutenticationService : IAutenticationService
+    public class AuthenticationService : IAutenticationService
     {
         private readonly UserManager<User> _userManager;
         private readonly IRepositoryManager _repositoryManager;
@@ -25,7 +28,7 @@ namespace Service
 
         private User? _user;
 
-        public AutenticationService(UserManager<User> userManager,
+        public AuthenticationService(UserManager<User> userManager,
            IMapper mapper, IOptions<JwtConfiguration> configuration,
            RoleManager<IdentityRole> roleManager, IRepositoryManager repositoryManager)
         {
@@ -33,9 +36,11 @@ namespace Service
             _mapper = mapper;
             _configuration = configuration;
             _roleManager = roleManager;
+            Console.WriteLine(_configuration.Value);
             _jwtConfiguration = _configuration.Value;
             _repositoryManager = repositoryManager;
         }
+
 
         public async Task<IdentityResult> RegisterUser(UserForCreationDto userForRegistrartion, string emailToken)
         {
@@ -52,6 +57,16 @@ namespace Service
 
             return result;
         }
+
+        public async Task<bool> LoginUser(UserForAuthenticationDto userForAuth)
+        {
+            _user = await _userManager.FindByEmailAsync(userForAuth.Email!);
+
+            var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password!));
+
+            return result;
+        }
+
         public async Task<TokenDto> CreateToken(bool populateExp)
         {
             var signingCredentials = GetSigningCredentials();
@@ -83,23 +98,41 @@ namespace Service
             return await CreateToken(populateExp: false);
         }
 
-
-        public async Task<bool> LoginUser(UserForAuthenticationDto userForAuth)
+        public async Task<string> ForgotPassword(string email)
         {
-            _user = await _userManager.FindByEmailAsync(userForAuth.UserName!);
+            var user = await _userManager.FindByEmailAsync(email);
 
-            var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password!));
-            //if (!result)
-            //    _logger.LogWarn($"{nameof(LoginUser)}: Authentication failed. Wrong user name or password.");
+            if (user is null)
+                throw new UserNotFoundByEmailException(email);
 
-            return result;
+            var token = await _userManager.GeneratePasswordResetTokenAsync(user!);
+            await _userManager.UpdateAsync(user!);
+
+            return token;
         }
 
+        public async Task ResetPassword(ResetPasswordDto model)
+        {
+            var user = await _userManager.FindByEmailAsync(model.Email!);
+
+            if (user is null)
+                throw new UserNotFoundByEmailException(model.Email!);
+
+            var resetPasswordResult = await _userManager.ResetPasswordAsync(user!, model.ResetToken!, model.NewPassword!);
+
+            if (!resetPasswordResult.Succeeded)
+                throw new PasswordResetException();
+        }
 
         private SigningCredentials GetSigningCredentials()
         {
-            var key = Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET")!);
-            var secret = new SymmetricSecurityKey(key);
+
+            var key = _jwtConfiguration.SecretKey
+                ?? throw new InvalidOperationException("JWT SecretKey not configured");
+
+            var keyBytes = Encoding.UTF8.GetBytes(key);
+
+            var secret = new SymmetricSecurityKey(keyBytes);
 
             return new SigningCredentials(secret, SecurityAlgorithms.HmacSha256);
         }
@@ -108,7 +141,8 @@ namespace Service
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Name, _user!.Email!)
+                new Claim(ClaimTypes.Name, _user!.Email!),
+                new Claim(ClaimTypes.NameIdentifier, _user.Id)
             };
 
             var roles = await _userManager.GetRolesAsync(_user);
@@ -119,18 +153,15 @@ namespace Service
 
             return claims;
         }
-        private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials,
-        List<Claim> claims)
+
+        private JwtSecurityToken GenerateTokenOptions(SigningCredentials signingCredentials, List<Claim> claims)
         {
-
-            var tokenOptions = new JwtSecurityToken
-            (
-
+            var tokenOptions = new JwtSecurityToken(
                 issuer: _jwtConfiguration.ValidIssuer,
                 audience: _jwtConfiguration.ValidAudience,
                 claims: claims,
-                expires: DateTime.Now.AddMinutes(Convert.ToDouble(_jwtConfiguration.Expires)),
-            signingCredentials: signingCredentials
+                expires: DateTime.UtcNow.AddMinutes(_jwtConfiguration.ExpiresInMinutes), // Убрали Convert
+                signingCredentials: signingCredentials
             );
             return tokenOptions;
         }
@@ -176,10 +207,8 @@ namespace Service
                 ValidateAudience = true,
                 ValidateIssuer = true,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("SECRET")!)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfiguration.SecretKey!)),
                 ValidateLifetime = true,
-
 
                 ValidIssuer = _jwtConfiguration.ValidIssuer,
                 ValidAudience = _jwtConfiguration.ValidAudience
@@ -199,19 +228,5 @@ namespace Service
 
             return principal;
         }
-
-        //public string GenerateToken() => Guid.NewGuid().ToString();
-
-
-
-
-        //private async Task CheckIfExistUserPhoneNumber(User user)
-        //{
-        //    if (await _repositoryManager.User.IsPhoneNumberTakenAsync(user.PhoneNumber!, trackChanges: false))
-        //    {
-        //        throw new UserAlreadyExistsException(user.PhoneNumber!);
-        //    }
-        //}
-
     }
 }

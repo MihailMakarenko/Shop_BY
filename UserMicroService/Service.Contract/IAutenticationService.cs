@@ -14,7 +14,8 @@ namespace Service.Contract
         Task<bool> LoginUser(UserForAuthenticationDto userForAuth);
         Task<TokenDto> CreateToken(bool populateExp);
         Task<TokenDto> RefreshToken(TokenDto tokenDto);
+        Task<string> ForgotPassword(string email);
+        Task ResetPassword(ResetPasswordDto model);
 
-        //string GenerateToken();
     }
 }

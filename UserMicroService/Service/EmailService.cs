@@ -33,9 +33,11 @@ namespace Service
             await SendEmail(email, subject, emailBody);
         }
 
-        public Task SendResetPasswordEmail(string email, string emailBodyUrl)
+        public async Task SendResetPasswordEmail(string email, string emailBodyUrl)
         {
-            throw new NotImplementedException();
+            var subject = "Password reset";
+            var emailBody = $"To reset your password <a href=\"{emailBodyUrl}\">click here </a> ";
+            await SendEmail(email, subject, emailBody);
         }
 
 

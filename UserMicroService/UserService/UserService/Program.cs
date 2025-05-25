@@ -1,3 +1,4 @@
+using Entities.Models;
 using Microsoft.Extensions.Logging;
 using UserService.DI;
 
@@ -10,6 +11,7 @@ namespace UserService
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.ConfigureRepositoryManager();
+          
             builder.Services.ConfigureServiceManager();
             builder.Services.AddAutoMapper(typeof(Program));
 
@@ -19,8 +21,9 @@ namespace UserService
 
             builder.Services.ConfigureIdentity();
             builder.Services.ConfigureJWT(builder.Configuration);
+            builder.Services.AddJwtConfiguration(builder.Configuration);
 
-           
+
             builder.Services.ConfigureCors();
             builder.Services.ConfigureIISIntegration();
             builder.Services.ConfigureSqlContext(builder.Configuration);
@@ -30,10 +33,10 @@ namespace UserService
 
             app.ConfigureExceptionHandler();
 
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
+            //if (app.Environment.IsDevelopment())
+            //{
+            //    app.UseDeveloperExceptionPage();
+            //}
 
             app.UseHttpsRedirection();
             app.UseRouting();

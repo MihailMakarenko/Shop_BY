@@ -13,7 +13,7 @@ namespace UserService.DI
 {
     public static class ServiceExtensions
     {
-        
+
         public static void ConfigureCors(this IServiceCollection services)
         {
 
@@ -69,13 +69,15 @@ namespace UserService.DI
             .AddDefaultTokenProviders();
         }
 
+        public static void AddJwtConfiguration(this IServiceCollection services, IConfiguration configuration)
+        {
+            services.Configure<JwtConfiguration>(configuration.GetSection("JwtSettings"));
+        }
+
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
-            var secretKey = Environment.GetEnvironmentVariable("SECRET")
-                           ?? jwtSettings["Secret"]
-                           ?? throw new ArgumentNullException("JWT secret key is missing");
-
+        
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -91,12 +93,10 @@ namespace UserService.DI
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings["ValidIssuer"],
                     ValidAudience = jwtSettings["ValidAudience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!))
                 };
             });
         }
-
-
 
     }
 }

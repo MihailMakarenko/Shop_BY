@@ -1,25 +1,18 @@
-﻿using AutoMapper;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json.Linq;
+﻿using Microsoft.AspNetCore.Mvc;
 using Service.Contract;
 using Shared.DataTransferObjects.UserDto;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace UserService.Presentation.Controllers
 {
     [Route("api/authentication")]
     [ApiController]
-    public class AuthenticationController(IServiceManager _serviceManager, IMapper _mapper) : ControllerBase
+    public class AuthenticationController(IServiceManager _serviceManager) : ControllerBase
     {
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody] UserForCreationDto UserForRegistration)
         {
-           
+
             string emailToken = Guid.NewGuid().ToString();
             var result = await _serviceManager.AutenticationService.RegisterUser(UserForRegistration, emailToken);
 
@@ -36,6 +29,25 @@ namespace UserService.Presentation.Controllers
             return Ok("Registration was successful. Check email.");
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto authUser)
+        {
+            if (!await _serviceManager.AutenticationService.LoginUser(authUser))
+                return Unauthorized();
+
+            var tokenDto = await _serviceManager.AutenticationService.CreateToken(populateExp: true);
+
+            return Ok(tokenDto);
+        }
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] TokenDto tokenDto)
+        {
+            var tokenDtoToReturn = await
+            _serviceManager.AutenticationService.RefreshToken(tokenDto);
+            return Ok(tokenDtoToReturn);
+        }
+
         [HttpGet("confirmemail")]
         public async Task<IActionResult> ConfirmEmail([EmailAddress] string email, string token)
         {
@@ -43,5 +55,32 @@ namespace UserService.Presentation.Controllers
             return Ok("Confirmation was successful.");
         }
 
+        [HttpPost("forgotpassword")]
+        public async Task<IActionResult> ForgotPassword([EmailAddress] string email)
+        {
+            var token = await _serviceManager.AutenticationService.ForgotPassword(email);
+            var emailBodyUrl = Request.Scheme + "://" + Request.Host + Url.Action("resetpassword", "authentication", new { email, token });
+            await _serviceManager.EmailService.SendResetPasswordEmail(email, emailBodyUrl);
+            return Ok($"Check {email} email. You may now reset your password whithin 1 hour.");
+        }
+
+        [HttpGet("resetpassword")]
+        public ActionResult<ResetPasswordDto> ResetPassword([EmailAddress] string email, string token)
+        {
+            var model = new ResetPasswordDto
+            {
+                Email = email,
+                NewPassword = "",
+                ResetToken = token
+            };
+            return Ok(model);
+        }
+
+        [HttpPost("resetpassword")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordDto model)
+        {
+            await _serviceManager.AutenticationService.ResetPassword(model);
+            return Ok("Password has been successfully changed!");
+        }
     }
 }

@@ -21,7 +21,5 @@ namespace Entities.Models
         public override bool PhoneNumberConfirmed { get; set; }
         [NotMapped]
         public override int AccessFailedCount { get; set; }
-        public string? ResetPasswordToken { get; set; }
-        public DateTime? ResetPasswordTokenExpiry { get; set; }
     }
 }

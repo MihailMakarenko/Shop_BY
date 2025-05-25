@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Entities.Models
+﻿namespace Entities.Models
 {
     public class JwtConfiguration
     {
-        public string Section { get; set; } = "JwtSettings";
-
-        public string? ValidIssuer { get; set; }
-        public string? ValidAudience { get; set; }
-        public string? Expires { get; set; }
+        public string SecretKey { get; set; } = null!;
+        public string ValidIssuer { get; set; } = null!;
+        public string ValidAudience { get; set; } = null!;
+        public int ExpiresInMinutes { get; set; } // Изменили на int
+        public int ClockSkew { get; set; } // Добавили новое свойство
     }
 }

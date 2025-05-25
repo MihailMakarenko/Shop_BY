@@ -10,7 +10,6 @@ namespace Service.Contract
     {
         IUserService UserService { get; }
         IEmailService EmailService { get; }
-
         IAutenticationService AutenticationService { get; }
     }
 }

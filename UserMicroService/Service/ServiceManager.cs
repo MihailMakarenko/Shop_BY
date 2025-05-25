@@ -23,7 +23,7 @@ namespace Service
              UserManager<User> userManager, IOptions<JwtConfiguration> configuration, RoleManager<IdentityRole> roleManager)
         {
             _userService = new Lazy<IUserService>(() => new UserService(repositoryManager, mapper));
-            _authenticationService = new Lazy<IAutenticationService>(() => new AutenticationService(userManager, mapper, configuration, roleManager, repositoryManager));
+            _authenticationService = new Lazy<IAutenticationService>(() => new AuthenticationService(userManager, mapper, configuration, roleManager, repositoryManager));
             _emailService = new Lazy<IEmailService>(() => new EmailService(repositoryManager,config));
         }
 
