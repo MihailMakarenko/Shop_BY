@@ -1,5 +1,3 @@
-using Entities.Models;
-using Microsoft.Extensions.Logging;
 using UserService.DI;
 
 namespace UserService
@@ -11,10 +9,10 @@ namespace UserService
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.ConfigureRepositoryManager();
-          
+
             builder.Services.ConfigureServiceManager();
             builder.Services.AddAutoMapper(typeof(Program));
-
+            builder.Services.ConfigureFluentValidation();
             builder.Services.AddControllers()
                 .AddNewtonsoftJson()
                 .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
@@ -32,11 +30,6 @@ namespace UserService
             var app = builder.Build();
 
             app.ConfigureExceptionHandler();
-
-            //if (app.Environment.IsDevelopment())
-            //{
-            //    app.UseDeveloperExceptionPage();
-            //}
 
             app.UseHttpsRedirection();
             app.UseRouting();

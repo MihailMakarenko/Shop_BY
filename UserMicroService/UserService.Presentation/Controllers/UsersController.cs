@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Service.Contract;
 using Shared.DataTransferObjects.UserDto;
 namespace UserService.Presentation.Controllers
@@ -6,7 +7,7 @@ namespace UserService.Presentation.Controllers
     [Route("api/users")]
     [ApiController]
     
-    public class UsersController(IServiceManager _serviceManager) : ControllerBase
+    public class UsersController(IServiceManager _serviceManager,  IValidator<UserForUpdateDto> _updateValidator) : ControllerBase
     {
         [HttpGet("{id:guid}", Name = "UserById")]
         public async Task<IActionResult> GetUserById(Guid id)
@@ -36,6 +37,8 @@ namespace UserService.Presentation.Controllers
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserForUpdateDto userForUpdate)
         {
+            _updateValidator.ValidateAndThrow(userForUpdate);
+
             await _serviceManager.UserService.UpdateUser(id, userForUpdate, trackChanges: true);
 
             return NoContent();

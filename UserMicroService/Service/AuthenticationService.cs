@@ -160,7 +160,7 @@ namespace Service
                 issuer: _jwtConfiguration.ValidIssuer,
                 audience: _jwtConfiguration.ValidAudience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jwtConfiguration.ExpiresInMinutes), // Убрали Convert
+                expires: DateTime.UtcNow.AddMinutes(_jwtConfiguration.ExpiresInMinutes),
                 signingCredentials: signingCredentials
             );
             return tokenOptions;

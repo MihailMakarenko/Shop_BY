@@ -1,5 +1,6 @@
 ﻿using Contracts;
 using Entities.Models;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -42,6 +43,11 @@ namespace UserService.DI
 
         }
 
+        public static void ConfigureFluentValidation(this IServiceCollection services)
+        {
+            services.AddValidatorsFromAssemblyContaining(typeof(UserService.Presentation.AssemblyReference));
+        }
+
         public static void ConfigureRepositoryManager(this IServiceCollection services)
         {
 
@@ -77,7 +83,7 @@ namespace UserService.DI
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
-        
+
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

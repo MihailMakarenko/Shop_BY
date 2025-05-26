@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Mvc;
 using Service.Contract;
 using Shared.DataTransferObjects.UserDto;
 using System.ComponentModel.DataAnnotations;
@@ -7,11 +8,12 @@ namespace UserService.Presentation.Controllers
 {
     [Route("api/authentication")]
     [ApiController]
-    public class AuthenticationController(IServiceManager _serviceManager) : ControllerBase
+    public class AuthenticationController(IServiceManager _serviceManager, IValidator<UserForCreationDto> _postValidator, IValidator<UserForAuthenticationDto> _authValidator) : ControllerBase
     {
         [HttpPost]
         public async Task<IActionResult> RegisterUser([FromBody] UserForCreationDto UserForRegistration)
         {
+            _postValidator.ValidateAndThrow(UserForRegistration);
 
             string emailToken = Guid.NewGuid().ToString();
             var result = await _serviceManager.AutenticationService.RegisterUser(UserForRegistration, emailToken);
@@ -32,6 +34,8 @@ namespace UserService.Presentation.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto authUser)
         {
+            _authValidator.ValidateAndThrow(authUser);
+
             if (!await _serviceManager.AutenticationService.LoginUser(authUser))
                 return Unauthorized();
 
@@ -45,6 +49,7 @@ namespace UserService.Presentation.Controllers
         {
             var tokenDtoToReturn = await
             _serviceManager.AutenticationService.RefreshToken(tokenDto);
+
             return Ok(tokenDtoToReturn);
         }
 
