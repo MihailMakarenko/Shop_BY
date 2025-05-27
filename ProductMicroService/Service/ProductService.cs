@@ -2,8 +2,11 @@
 using Contracts;
 using Entities.Exceptions.ProductsException;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using Service.Contract;
 using Shared.DataTransferObjects.ProductDto;
+using Sieve.Models;
+using Sieve.Services;
 
 namespace Service
 {
@@ -11,11 +14,13 @@ namespace Service
     {
         private readonly IRepositoryManager _repositoryManager;
         private readonly IMapper _mapper;
+        private readonly SieveProcessor _sieveProcessor;
 
-        public ProductService(IRepositoryManager repositoryManager, IMapper mapper)
+        public ProductService(IRepositoryManager repositoryManager, IMapper mapper, SieveProcessor sieveProcessor)
         {
             _repositoryManager = repositoryManager;
             _mapper = mapper;
+            _sieveProcessor = sieveProcessor;
         }
 
         public async Task<ProductDto> CreateProductForUser(Guid userId, ProductForCreationDto productForCreation, bool trackChanges)
@@ -37,9 +42,12 @@ namespace Service
             await _repositoryManager.SaveAsync();
         }
 
-        public Task<IEnumerable<ProductDto>> GetAllProducts(bool trackChagnes)
+        public async Task<IEnumerable<ProductDto>> GetAllProducts(SieveModel sieveModel, bool trackChanges)
         {
-            throw new NotImplementedException();
+            var products = _repositoryManager.Product.GetAllProducts(trackChanges);
+
+            var filteredQuery = _sieveProcessor.Apply(sieveModel, products);
+            return await _mapper.ProjectTo<ProductDto>(filteredQuery).ToListAsync();
         }
 
         public async Task<ProductDto> GetProductByUserAsync(Guid id, Guid userId, bool trackChanges)
@@ -51,16 +59,21 @@ namespace Service
             return productDto;
         }
 
-        public Task<IEnumerable<ProductDto>> GetProductsByUserAsync(Guid userId, bool trackChanges)
+        public async Task<IEnumerable<ProductDto>> GetProductsByUserAsync(Guid userId, SieveModel sieveModel, bool trackChanges)
         {
-            throw new NotImplementedException();
+            var products =  _repositoryManager.Product.GetProductsForUserAsync(userId, trackChanges);
+            
+            var filteredQuery = _sieveProcessor.Apply(sieveModel, products);
+            return await _mapper.ProjectTo<ProductDto>(filteredQuery).ToListAsync();
         }
 
-        public async Task UpdateProductForUser(Guid id, Guid userId, ProductForUpdateDto productForUpdate, bool trackChagnes)
+        public async Task UpdateProductForUser(Guid id, Guid userId, ProductForUpdateDto productForUpdate, bool trackChanges)
         {
-            var productEntity = await GetProductAndCheckIfExists(id, userId, trackChagnes);
+            var productEntity = await GetProductAndCheckIfExists(id, userId, trackChanges);
 
             _mapper.Map(productForUpdate, productEntity);
+            productEntity.UpdatedAt = DateTime.Now;
+
             await _repositoryManager.SaveAsync();
         }
 

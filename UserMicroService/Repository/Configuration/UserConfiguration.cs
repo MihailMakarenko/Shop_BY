@@ -22,11 +22,13 @@ namespace Repository.Configuration
 
             builder.Property(u => u.PhoneNumber).HasMaxLength(20);
 
-            builder.HasIndex(u => u.PhoneNumber).IsUnique();
-
             builder.Property(u => u.RefreshToken).HasMaxLength(500);
 
-   builder.HasData(
+            builder.Property(u => u.UserName).HasMaxLength(256).IsRequired().HasComputedColumnSql("[Email]");
+
+            builder.Property(u => u.NormalizedUserName).HasMaxLength(256).IsRequired().HasComputedColumnSql("UPPER([Email])");
+
+            builder.HasData(
             new User
             {
                 Id = "a1b2c3d4-e5f6-4a7b-8c9d-0e1f2a3b4c5d",

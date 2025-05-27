@@ -1,6 +1,6 @@
-
-using Microsoft.Extensions.Logging;
+using ProductService.Application.ProductFeatures.Queries.GetFilteredSortedProducts;
 using ProductService.DI;
+using Sieve.Services;
 
 namespace ProductService
 {
@@ -10,39 +10,38 @@ namespace ProductService
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Services.ConfigureSwagger();
             builder.Services.ConfigureRepositoryManager();
             builder.Services.ConfigureServiceManager();
             builder.Services.AddAutoMapper(typeof(Program));
-
+            builder.Services.ConfigureFluentValidation();
             builder.Services.AddControllers()
                 .AddNewtonsoftJson()
                 .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
 
-            //builder.Services.ConfigureIdentity();
             builder.Services.ConfigureJWT(builder.Configuration);
-
-
+            builder.Services.AddScoped<SieveProcessor, ApplicationSieveProcessor>();
             builder.Services.ConfigureCors();
             builder.Services.ConfigureIISIntegration();
             builder.Services.ConfigureSqlContext(builder.Configuration);
-
             builder.Services.AddEndpointsApiExplorer();
+
             var app = builder.Build();
 
             app.ConfigureExceptionHandler();
 
-            if (app.Environment.IsDevelopment())
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-                app.UseDeveloperExceptionPage();
-            }
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService API v1");
+                c.RoutePrefix = "swagger";
+            });
 
             app.UseHttpsRedirection();
             app.UseRouting();
-
             app.UseCors("CorsPolicy");
             app.UseAuthentication();
             app.UseAuthorization();
-
             app.MapControllers();
 
             app.Run();

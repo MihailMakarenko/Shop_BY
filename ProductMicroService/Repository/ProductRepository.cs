@@ -21,16 +21,23 @@ namespace Repository
             Delete(product);
         }
 
+        public IQueryable<Product> GetAllProducts(bool trackChanges)
+        {
+            var products = FindAll(trackChanges);
+
+            return products;
+        }
+
         public async Task<Product?> GetProductForUserAsync(Guid id, Guid userId, bool trackChanges)
         {
-            var product = await FindByCondition(p => p.Id.Equals(id) && p.CreatedByUserId!.Equals(userId), trackChanges).SingleOrDefaultAsync();
+            var product = await FindByCondition(p => p.Id.Equals(id) && p.CreatedByUserId!.Equals(userId.ToString()), trackChanges).SingleOrDefaultAsync();
 
             return product;
         }
 
-        public async Task<IEnumerable<Product>> GetProductsForUserAsync(Guid userId, bool trackChanges)
+        public IQueryable<Product> GetProductsForUserAsync(Guid userId, bool trackChanges)
         {
-            var products = await FindByCondition(p => p.CreatedByUserId!.Equals(userId), trackChanges).ToListAsync();
+            var products = FindByCondition(p => p.CreatedByUserId == userId.ToString(), trackChanges);
 
             return products;
         }

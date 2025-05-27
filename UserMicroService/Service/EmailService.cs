@@ -1,16 +1,12 @@
-﻿using AutoMapper;
-using Contracts;
-using Entities.Exceptions;
-using Entities.Models;
+﻿using Contracts;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using Service.Contract;
-using Shared.DataTransferObjects.UserDto;
 
 namespace Service
 {
-    public class EmailService(IRepositoryManager _repositoryManager ,IConfiguration _config) : IEmailService
+    public class EmailService(IRepositoryManager _repositoryManager, IConfiguration _config) : IEmailService
     {
         public async Task ConfirmEmailByToken(string email, string token, bool trackChanges)
         {

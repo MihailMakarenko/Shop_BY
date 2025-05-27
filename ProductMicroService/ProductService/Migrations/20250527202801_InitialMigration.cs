@@ -24,7 +24,7 @@ namespace ProductService.Migrations
                     IsAvailable = table.Column<bool>(type: "bit", nullable: false, defaultValue: true),
                     CreatedByUserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UpdateAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETUTCDATE()")
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true, defaultValueSql: "GETUTCDATE()")
                 },
                 constraints: table =>
                 {

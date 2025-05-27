@@ -1,7 +1,6 @@
 ﻿using Contracts;
 using Entities.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 
 namespace Repository
 {
@@ -9,7 +8,7 @@ namespace Repository
     {
         public UserRepository(AppDbContext context) : base(context) { }
 
-    
+
 
         public void CreateUser(User user)
         {

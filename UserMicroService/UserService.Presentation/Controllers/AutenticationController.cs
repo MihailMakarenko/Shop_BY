@@ -16,6 +16,7 @@ namespace UserService.Presentation.Controllers
             _postValidator.ValidateAndThrow(UserForRegistration);
 
             string emailToken = Guid.NewGuid().ToString();
+
             var result = await _serviceManager.AutenticationService.RegisterUser(UserForRegistration, emailToken);
 
             if (!result.Succeeded)

@@ -5,7 +5,6 @@ using Entites.Exceptions.UsersException;
 using Entities.Exceptions;
 using Entities.Models;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Service.Contract;
@@ -46,9 +45,7 @@ namespace Service
         {
             var user = _mapper.Map<User>(userForRegistrartion);
             user.EmailConfirmToken = emailToken;
-            // Checking the existence of a phone
-
-
+            user.LockoutEnabled = false;
             var result = await _userManager.CreateAsync(user, userForRegistrartion.Password!);
 
 
@@ -170,23 +167,26 @@ namespace Service
         {
             bool allRolesExist = true;
 
-            if (userForReqistration.Roles is not null &&
-                userForReqistration.Roles.Count != 0)
+            if (userForReqistration.Roles is null || userForReqistration.Roles!.Count == 0)
             {
-                foreach (string role in userForReqistration.Roles)
-                {
-                    if (await _roleManager.RoleExistsAsync(role) == false)
-                    {
-                        allRolesExist = false;
-                        break;
-                    }
-                }
+                await _userManager.AddToRoleAsync(user, "User");
+                return;
+            }
 
-                if (allRolesExist)
+            foreach (string role in userForReqistration.Roles!)
+            {
+                if (await _roleManager.RoleExistsAsync(role) == false)
                 {
-                    await _userManager.AddToRolesAsync(user, userForReqistration.Roles);
+                    allRolesExist = false;
+                    break;
                 }
             }
+
+            if (allRolesExist)
+            {
+                await _userManager.AddToRolesAsync(user, userForReqistration.Roles);
+            }
+
         }
 
         private string GenerateRefreshToken()

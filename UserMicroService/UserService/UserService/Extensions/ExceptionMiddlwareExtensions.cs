@@ -4,7 +4,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Diagnostics;
 using System.Text.Json;
 
-namespace UserService.DI
+namespace UserService.Extensions
 {
     public static class ExceptionMiddlwareExtensions
     {

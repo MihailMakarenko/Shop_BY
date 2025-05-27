@@ -1,8 +1,9 @@
 ﻿using FluentValidation;
+using Shared.DataTransferObjects.UserDto;
 
 namespace UserService.Presentation.Validators.UserValidators
 {
-    public class UserForAuthenticationValidator : AbstractValidator<Shared.DataTransferObjects.UserDto.UserForAuthenticationDto>
+    public class UserForAuthenticationValidator : AbstractValidator<UserForAuthenticationDto>
     {
         public UserForAuthenticationValidator()
         {

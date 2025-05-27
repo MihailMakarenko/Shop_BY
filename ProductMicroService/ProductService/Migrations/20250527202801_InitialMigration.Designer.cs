@@ -12,7 +12,7 @@ using Repository;
 namespace ProductService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250524143535_InitialMigration")]
+    [Migration("20250527202801_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -59,7 +59,7 @@ namespace ProductService.Migrations
                         .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("UpdateAt")
+                    b.Property<DateTime?>("UpdatedAt")
                         .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("GETUTCDATE()");
@@ -90,7 +90,7 @@ namespace ProductService.Migrations
                             IsAvailable = true,
                             Name = "Ноутбук ASUS ROG Zephyrus",
                             Price = 249990m,
-                            UpdateAt = new DateTime(2023, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2023, 12, 10, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -111,7 +111,7 @@ namespace ProductService.Migrations
                             IsAvailable = false,
                             Name = "Apple Watch Series 9",
                             Price = 45990m,
-                            UpdateAt = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2024, 1, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -132,7 +132,7 @@ namespace ProductService.Migrations
                             IsAvailable = true,
                             Name = "Электронная книга PocketBook 740",
                             Price = 19990m,
-                            UpdateAt = new DateTime(2023, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2023, 9, 5, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {
@@ -153,7 +153,7 @@ namespace ProductService.Migrations
                             IsAvailable = false,
                             Name = "Монитор LG UltraFine 32UN880",
                             Price = 89990m,
-                            UpdateAt = new DateTime(2023, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                            UpdatedAt = new DateTime(2023, 11, 15, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         },
                         new
                         {

@@ -1,12 +1,14 @@
 ﻿using Contracts;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Repository;
-using Service.Contract;
-using Service;
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using Repository;
+using Service;
+using Service.Contract;
 using System.Text;
+
 
 namespace ProductService.DI
 {
@@ -52,28 +54,15 @@ namespace ProductService.DI
             services.AddScoped<IServiceManager, ServiceManager>();
         }
 
-        //public static void ConfigureIdentity(this IServiceCollection services)
-        //{
-        //    var builder = services.AddIdentity<User, IdentityRole>(o =>
-        //    {
-        //        o.Password.RequireDigit = true;
-        //        o.Password.RequireLowercase = false;
-        //        o.Password.RequireUppercase = false;
-        //        o.Password.RequireNonAlphanumeric = false;
-        //        o.Password.RequiredLength = 10;
-        //        o.User.RequireUniqueEmail = true;
-        //        o.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
-        //    })
-        //    .AddEntityFrameworkStores<AppDbContext>()
-        //    .AddDefaultTokenProviders();
-        //}
+        public static void ConfigureFluentValidation(this IServiceCollection services)
+        {
+            services.AddValidatorsFromAssemblyContaining(typeof(ProductService.Presentation.AssemblyReference));
+        }
+
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
-            var secretKey = Environment.GetEnvironmentVariable("SECRET")
-                           ?? jwtSettings["Secret"]
-                           ?? throw new ArgumentNullException("JWT secret key is missing");
 
             services.AddAuthentication(opt =>
             {
@@ -90,11 +79,48 @@ namespace ProductService.DI
                     ValidateIssuerSigningKey = true,
                     ValidIssuer = jwtSettings["ValidIssuer"],
                     ValidAudience = jwtSettings["ValidAudience"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings["SecretKey"]!))
                 };
             });
         }
 
+        public static void ConfigureSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "ProductService API",
+                    Version = "v1",
+                    Description = "API for product"
+                });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Place to add JWT with Bearer",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Name = "Bearer",
+                        },
+                        new List<string>()
+                    }
+                });
+            });
+        }
 
     }
 }
