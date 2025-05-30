@@ -12,7 +12,7 @@ public class ApplicationSieveProcessor : SieveProcessor
     protected override SievePropertyMapper MapProperties(SievePropertyMapper mapper)
     {
         mapper.Property<Product>(product => product.Price).CanFilter().CanSort();
-        mapper.Property<Product>(product => product.Name).CanSort();
+        mapper.Property<Product>(product => product.Name).CanFilter().CanSort();
         mapper.Property<Product>(product => product.CreatedAt).CanFilter().CanSort();
         mapper.Property<Product>(product => product.UpdatedAt).CanFilter().CanSort();
         mapper.Property<Product>(product => product.IsAvailable).CanFilter();

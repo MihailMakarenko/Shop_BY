@@ -14,9 +14,9 @@ namespace Service
     {
         private readonly IRepositoryManager _repositoryManager;
         private readonly IMapper _mapper;
-        private readonly SieveProcessor _sieveProcessor;
+        private readonly ISieveProcessor _sieveProcessor;
 
-        public ProductService(IRepositoryManager repositoryManager, IMapper mapper, SieveProcessor sieveProcessor)
+        public ProductService(IRepositoryManager repositoryManager, IMapper mapper, ISieveProcessor sieveProcessor)
         {
             _repositoryManager = repositoryManager;
             _mapper = mapper;
@@ -45,14 +45,16 @@ namespace Service
         public async Task<IEnumerable<ProductDto>> GetAllProducts(SieveModel sieveModel, bool trackChanges)
         {
             var products = _repositoryManager.Product.GetAllProducts(trackChanges);
-
             var filteredQuery = _sieveProcessor.Apply(sieveModel, products);
-            return await _mapper.ProjectTo<ProductDto>(filteredQuery).ToListAsync();
+
+            
+            var productDtos = filteredQuery.ToList().Select(product => _mapper.Map<ProductDto>(product));
+
+            return await Task.FromResult(productDtos);
         }
 
         public async Task<ProductDto> GetProductByUserAsync(Guid id, Guid userId, bool trackChanges)
         {
-            // add check if user exists
             var product = await GetProductAndCheckIfExists(id, userId, trackChanges);
 
             var productDto = _mapper.Map<ProductDto>(product);
@@ -61,10 +63,11 @@ namespace Service
 
         public async Task<IEnumerable<ProductDto>> GetProductsByUserAsync(Guid userId, SieveModel sieveModel, bool trackChanges)
         {
-            var products =  _repositoryManager.Product.GetProductsForUserAsync(userId, trackChanges);
-            
+            var products = _repositoryManager.Product.GetProductsForUserAsync(userId, trackChanges);
             var filteredQuery = _sieveProcessor.Apply(sieveModel, products);
-            return await _mapper.ProjectTo<ProductDto>(filteredQuery).ToListAsync();
+
+            var productsDto =   filteredQuery.ToList().Select(p => _mapper.Map<ProductDto>(p)).ToList();
+            return await Task.FromResult(productsDto);
         }
 
         public async Task UpdateProductForUser(Guid id, Guid userId, ProductForUpdateDto productForUpdate, bool trackChanges)

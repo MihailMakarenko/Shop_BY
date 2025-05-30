@@ -25,7 +25,7 @@ namespace ProductService
             builder.Services.ConfigureIISIntegration();
             builder.Services.ConfigureSqlContext(builder.Configuration);
             builder.Services.AddEndpointsApiExplorer();
-
+            builder.Services.AddScoped<ISieveProcessor, SieveProcessor>();
             var app = builder.Build();
 
             app.ConfigureExceptionHandler();
