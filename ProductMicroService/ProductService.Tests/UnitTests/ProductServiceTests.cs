@@ -29,7 +29,7 @@ namespace ProductService.Tests.UnitTests
             _repositoryManagerMock = new Mock<IRepositoryManager>();
             _mapperMock = new Mock<IMapper>();
             var sieveOptionsMock = new Mock<IOptions<SieveOptions>>();
-            _sieveProcessorMock = new Mock<ISieveProcessor>(); // Changed to ISieveProcessor
+            _sieveProcessorMock = new Mock<ISieveProcessor>();
             _productService = new Service.ProductService(_repositoryManagerMock.Object, _mapperMock.Object, _sieveProcessorMock.Object);
             _product = new Product
             {

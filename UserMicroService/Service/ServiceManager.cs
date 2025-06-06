@@ -14,9 +14,9 @@ namespace Service
         private readonly Lazy<IAutenticationService> _authenticationService;
         private readonly Lazy<IEmailService> _emailService;
         public ServiceManager(IConfiguration config, IRepositoryManager repositoryManager, IMapper mapper,
-             UserManager<User> userManager, IOptions<JwtConfiguration> configuration, RoleManager<IdentityRole> roleManager)
+             UserManager<User> userManager, IOptions<JwtConfiguration> configuration, RoleManager<IdentityRole> roleManager, IRabbitMqService rabbitMqService)
         {
-            _userService = new Lazy<IUserService>(() => new UserService(repositoryManager, mapper));
+            _userService = new Lazy<IUserService>(() => new UserService(repositoryManager, mapper, rabbitMqService));
             _authenticationService = new Lazy<IAutenticationService>(() => new AuthenticationService(userManager, mapper, configuration, roleManager, repositoryManager));
             _emailService = new Lazy<IEmailService>(() => new EmailService(repositoryManager, config));
         }

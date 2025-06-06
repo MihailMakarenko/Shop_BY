@@ -1,4 +1,8 @@
+using MassTransit;
 using UserService.Extensions;
+using MassTransit;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace UserService
 {
@@ -19,6 +23,23 @@ namespace UserService
             builder.Services.ConfigureFluentValidation();
             builder.Services.ConfigureCors();
             builder.Services.ConfigureIISIntegration();
+            builder.Services.ConfigureRabbitMq();
+            //builder.Services.AddMassTransit(x =>
+            //{
+            //    x.AddConsumer<TelemetryDataConsumer>();
+            //    x.UsingRabbitMq((context, cfg) =>
+            //    {
+            //        cfg.Host("localhost", "/", host =>
+            //        {
+            //            host.Username("guest");
+            //            host.Password("guest");
+            //        });
+
+            //        cfg.ConfigureEndpoints(context);
+            //    });
+            //});
+
+
 
             builder.Services.AddControllers()
                 .AddNewtonsoftJson()

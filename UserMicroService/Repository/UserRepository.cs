@@ -22,7 +22,9 @@ namespace Repository
 
         public async Task<IEnumerable<User>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges)
         {
-            return await FindByCondition(u => ids.Contains(Guid.Parse(u.Id)), trackChanges).ToListAsync();
+            var idStrings = ids.Select(id => id.ToString()).ToList();
+
+            return await FindByCondition(u => idStrings.Contains(u.Id), trackChanges).ToListAsync();
         }
 
         public async Task<User?> GetUserAsync(Guid id, bool trackChanges)

@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities.Models;
 using FluentValidation;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,27 @@ namespace UserService.Extensions
                 b => b.MigrationsAssembly("UserService")));
 
         }
+
+        public static void ConfigureRabbitMq(this IServiceCollection services)
+        {
+            services.AddScoped<IRabbitMqService, RabbitMqService>();
+        }
+
+        //public static void ConfigureMassTransit(this IServiceCollection services)
+        //{
+        //    services.AddMassTransit(x =>
+        //    {
+        //        x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
+        //        {
+        //            config.UseHealthCheck(provider);
+        //            config.Host(new Uri("rabbitmq://localhost"), h =>
+        //            {
+        //                h.Username("guest");
+        //                h.Password("guest");
+        //            });
+        //        }));
+        //    });
+        //}
 
         public static void ConfigureFluentValidation(this IServiceCollection services)
         {

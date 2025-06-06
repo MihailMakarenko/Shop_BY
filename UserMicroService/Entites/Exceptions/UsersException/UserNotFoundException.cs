@@ -1,8 +1,8 @@
 ﻿namespace Entities.Exceptions.UsersException
 {
-    public class UsersNotFoundException : NotFoundException
+    public class UserNotFoundException : NotFoundException
     {
-        public UsersNotFoundException(Guid userId) : base($"The User with " +
+        public UserNotFoundException(Guid userId) : base($"The User with " +
           $"id: {userId} doesn't exist in the database.")
         {
         }

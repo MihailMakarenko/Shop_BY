@@ -23,8 +23,8 @@ namespace UserService.Presentation.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [HttpGet("collection/({ids})", Name = "UserCollection")]
-        public async Task<IActionResult> GetUsersCollections(IEnumerable<Guid> ids)
+        [HttpGet("collection", Name = "UserCollection")]
+        public async Task<IActionResult> GetUsersCollections([FromQuery] IEnumerable<Guid> ids)
         {
             var users = await _serviceManager.UserService.GetUsersByIds(ids, trackChanges: false);
 
@@ -53,6 +53,15 @@ namespace UserService.Presentation.Controllers
                 return Forbid();
 
             await _serviceManager.UserService.UpdateUser(id, userForUpdate, trackChanges: true);
+
+            return NoContent();
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id:guid}/deactivate")]
+        public async Task<IActionResult> DeactivateUser(Guid id)
+        {
+            await _serviceManager.UserService.DeactivateUser(id, trackChanges: true);
 
             return NoContent();
         }

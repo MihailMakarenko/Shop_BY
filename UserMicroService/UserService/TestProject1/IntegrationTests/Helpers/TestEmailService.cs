@@ -1,15 +1,19 @@
 ﻿using Contracts;
 using Entites.Exceptions.EmailException;
 using Entites.Exceptions.UsersException;
-using Entities.Exceptions.UsersException;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Configuration;
 using MimeKit;
 using Service.Contract;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace Service
+namespace UserService.Tests.IntegrationTests.Helpers
 {
-    public class EmailService(IRepositoryManager _repositoryManager, IConfiguration _config) : IEmailService
+    public class TestEmailService(IRepositoryManager _repositoryManager, IConfiguration _config) : IEmailService
     {
         public async Task ConfirmEmailByToken(string email, string token, bool trackChanges)
         {
@@ -60,8 +64,7 @@ namespace Service
             {
                 await client.ConnectAsync(_config["Email:SmtpServer"], Convert.ToInt32(_config["Email:Port"]), Convert.ToBoolean(_config["Email:UseSSL"]));
                 await client.AuthenticateAsync(_config["Email:Username"], _config["Email:Password"]);
-                var res1 = await client.SendAsync(emailMessage);
-            }
+             }
             catch
             {
                 throw new Exception("Email sender trouble");

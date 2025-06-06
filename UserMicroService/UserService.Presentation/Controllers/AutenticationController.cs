@@ -67,7 +67,7 @@ namespace UserService.Presentation.Controllers
             var token = await _serviceManager.AutenticationService.ForgotPassword(email);
             var emailBodyUrl = Request.Scheme + "://" + Request.Host + Url.Action("resetpassword", "authentication", new { email, token });
             await _serviceManager.EmailService.SendResetPasswordEmail(email, emailBodyUrl);
-            return Ok($"Check {email} email. You may now reset your password whithin 1 hour.");
+            return Ok($"Check {email} email. You may now reset your password within 1 hour.");
         }
 
         [HttpGet("resetpassword")]

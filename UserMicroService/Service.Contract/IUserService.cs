@@ -6,8 +6,8 @@ namespace Service.Contract
     {
         Task<UserDto> GetUserById(Guid id, bool trackChanges);
         Task<IEnumerable<UserDto>> GetUsersByIds(IEnumerable<Guid> ids, bool trackChanges);
-        Task<UserDto> GetUserByEmail(string email);
         Task DeleteUser(Guid userId, bool trackChanges);
         Task UpdateUser(Guid userId, UserForUpdateDto userForUpdate, bool trackChanges);
+        Task DeactivateUser(Guid userId, bool trackChanges);
     }
 }
