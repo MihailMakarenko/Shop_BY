@@ -2,7 +2,6 @@
 using Contracts;
 using Entities.Exceptions.ProductsException;
 using Entities.Models;
-using Microsoft.EntityFrameworkCore;
 using Service.Contract;
 using Shared.DataTransferObjects.ProductDto;
 using Sieve.Models;
@@ -47,7 +46,7 @@ namespace Service
             var products = _repositoryManager.Product.GetAllProducts(trackChanges);
             var filteredQuery = _sieveProcessor.Apply(sieveModel, products);
 
-            
+
             var productDtos = filteredQuery.ToList().Select(product => _mapper.Map<ProductDto>(product));
 
             return await Task.FromResult(productDtos);
@@ -63,10 +62,10 @@ namespace Service
 
         public async Task<IEnumerable<ProductDto>> GetProductsByUserAsync(Guid userId, SieveModel sieveModel, bool trackChanges)
         {
-            var products = _repositoryManager.Product.GetProductsForUserAsync(userId, trackChanges);
+            var products = _repositoryManager.Product.GetProductsForUser(userId, trackChanges);
             var filteredQuery = _sieveProcessor.Apply(sieveModel, products);
 
-            var productsDto =   filteredQuery.ToList().Select(p => _mapper.Map<ProductDto>(p)).ToList();
+            var productsDto = filteredQuery.ToList().Select(p => _mapper.Map<ProductDto>(p)).ToList();
             return await Task.FromResult(productsDto);
         }
 
@@ -88,6 +87,22 @@ namespace Service
                 throw new ProductNotFoundException(id);
 
             return productEnity;
+        }
+
+        public async Task DeactivateProductForUser(Guid userId, bool trackChagnes)
+        {
+            var products = _repositoryManager.Product.GetProductsForUser(userId, trackChagnes);
+
+            if (products is null)
+                return;
+
+            foreach (var product in products)
+            {
+                product.IsAvailable = false;
+                product.UpdatedAt = DateTime.Now;
+            }
+
+            await _repositoryManager.SaveAsync();
         }
     }
 }

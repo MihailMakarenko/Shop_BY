@@ -9,5 +9,6 @@ namespace Service.Contract
         Task DeleteUser(Guid userId, bool trackChanges);
         Task UpdateUser(Guid userId, UserForUpdateDto userForUpdate, bool trackChanges);
         Task DeactivateUser(Guid userId, bool trackChanges);
+        Task ActivateUser(Guid userId, bool trackChanges);
     }
 }

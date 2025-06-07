@@ -11,5 +11,6 @@ namespace Service.Contract
         Task<ProductDto> CreateProductForUser(Guid userId, ProductForCreationDto productForCreation, bool trackChanges);
         Task DeleteProductForUser(Guid id, Guid userId, bool trackChanges);
         Task UpdateProductForUser(Guid id, Guid userId, ProductForUpdateDto productForUpdate,bool trackChanges);
+        Task DeactivateProductForUser(Guid userId, bool trackChanges);
     }
 }

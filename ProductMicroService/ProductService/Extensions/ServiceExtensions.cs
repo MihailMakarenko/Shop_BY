@@ -2,6 +2,7 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repository;
@@ -120,6 +121,13 @@ namespace ProductService.DI
                     }
                 });
             });
+        }
+
+
+        public static void ConfigureRabbitMqConsumers(this IServiceCollection services)
+        {
+            services.AddSingleton<ProductStatusConsumerService>();
+            services.AddHostedService(provider => provider.GetRequiredService<ProductStatusConsumerService>());
         }
 
     }

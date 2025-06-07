@@ -11,7 +11,8 @@ namespace Contracts
     {
         IQueryable<Product> GetAllProducts(bool trackChanges);
         Task<Product?> GetProductForUserAsync(Guid id, Guid userId, bool trackChanges);
-        IQueryable<Product> GetProductsForUserAsync(Guid userId, bool trackChanges);
+        IQueryable<Product> GetProductsForUser(Guid userId, bool trackChanges);
+        IQueryable<Product> GetProductsForChangedAvailable(Guid userId, bool trackChanges);
         void CreateProduct(Guid userId, Product product);
         void DeleteProduct(Product product);
     }

@@ -67,6 +67,15 @@ namespace UserService.Presentation.Controllers
         }
 
 
+        [Authorize(Roles = "Admin")]
+        [HttpPut("{id:guid}/activate")]
+        public async Task<IActionResult> ActivateUser(Guid id)
+        {
+            await _serviceManager.UserService.ActivateUser(id, trackChanges: true);
+
+            return NoContent();
+        }
+
         private Task<bool> CanAccessUserAsync(ClaimsPrincipal user, Guid targetUserId)
         {
             var currentUserId = user.FindFirstValue(ClaimTypes.NameIdentifier);

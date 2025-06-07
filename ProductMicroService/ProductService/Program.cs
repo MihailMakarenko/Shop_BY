@@ -1,6 +1,7 @@
 using ProductService.Application.ProductFeatures.Queries.GetFilteredSortedProducts;
 using ProductService.DI;
 using Service;
+using Service.Contract;
 using Sieve.Services;
 
 namespace ProductService
@@ -27,9 +28,9 @@ namespace ProductService
             builder.Services.ConfigureSqlContext(builder.Configuration);
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddScoped<ISieveProcessor, SieveProcessor>();
-            builder.Services.AddHostedService<RabbitMqConsumerService>();
 
-            //builder.Services.AddHostedService<RabbitMqListener>();
+            builder.Services.ConfigureRabbitMqConsumers();
+
             var app = builder.Build();
 
             app.ConfigureExceptionHandler();

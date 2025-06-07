@@ -8,7 +8,7 @@ namespace Service.Contract
 {
     public interface IRabbitMqService
     {
-        Task SendMessage(object obj);
-        Task SendMessage(string message);
+        Task SendMessage(object obj, string queue);
+        Task SendMessage(string message, string queue);
     }
 }

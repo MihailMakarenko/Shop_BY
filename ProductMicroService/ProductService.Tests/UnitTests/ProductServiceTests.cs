@@ -255,7 +255,7 @@ namespace ProductService.Tests.UnitTests
             var filteredProducts = new List<Product> { testProduct }.AsQueryable();
             var expectedDto = _productDto;
 
-            _repositoryManagerMock.Setup(x => x.Product.GetProductsForUserAsync(userId,trackChanges)).Returns(testProducts);
+            _repositoryManagerMock.Setup(x => x.Product.GetProductsForUser(userId,trackChanges)).Returns(testProducts);
             _sieveProcessorMock.Setup(x => x.Apply(sieveModel, testProducts, null, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>())).Returns(filteredProducts);
             _mapperMock.Setup(m => m.Map<ProductDto>(It.IsAny<Product>())).Returns(expectedDto);
 
@@ -269,7 +269,7 @@ namespace ProductService.Tests.UnitTests
             resultList.Should().ContainSingle();
             resultList.First().Should().BeEquivalentTo(expectedDto);
 
-            _repositoryManagerMock.Verify(x => x.Product.GetProductsForUserAsync(userId, trackChanges), Times.Once);
+            _repositoryManagerMock.Verify(x => x.Product.GetProductsForUser(userId, trackChanges), Times.Once);
             _sieveProcessorMock.Verify(x => x.Apply(sieveModel, testProducts, null, It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()), Times.Once);
             _mapperMock.Verify(x => x.Map<ProductDto>(It.IsAny<Product>()), Times.Once);
         }

@@ -16,7 +16,18 @@ namespace Service
 
             userEntity.LockoutEnabled = true;
 
-            await _mqService.SendMessage(userId.ToString());
+            await _mqService.SendMessage(userId.ToString(), "user.deactivation");
+
+            await _repositoryManager.SaveAsync();
+        }
+
+        public async Task ActivateUser(Guid userId, bool trackChanges)
+        {
+            var userEntity = await GetAndCheckUserIfExists(userId, trackChanges);
+
+            userEntity.LockoutEnabled = false;
+
+            await _mqService.SendMessage(userId.ToString(), "user.activation");
 
             await _repositoryManager.SaveAsync();
         }
