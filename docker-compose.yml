@@ -1,0 +1,91 @@
+services:
+
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"    
+      - "15672:15672"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Docker
+      RABBITMQ_DEFAULT_USER: "admin"
+      RABBITMQ_DEFAULT_PASS: "admin"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - app-network
+
+  user-sql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: user-sql-server
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "NewSecurePassword123!"
+    ports:
+      - "14332:1433"
+    volumes:
+      - user-sql-data:/var/opt/mssql
+    networks:
+      - app-network
+
+  product-sql-server:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: product-sql-server
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "NewSecurePassword123!"
+      MSSQL_PID: "Express"
+    ports:
+      - "14331:1433"
+    volumes:
+      - product-sql-data:/var/opt/mssql
+    networks:
+      - app-network
+
+  user-service:
+    build:
+      context: ./UserMicroService
+      dockerfile: UserService/UserService/Dockerfile
+    image: user-service:dev
+    ports:
+      - "5001:81"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:81
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - app-network
+
+  product-service:
+    build:
+      context: ./ProductMicroService
+      dockerfile: ProductService/Dockerfile
+    image: product-service:dev
+    ports:
+      - "5002:82"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - app-network
+
+volumes:
+  user-sql-data:
+  rabbitmq-data:
+  product-sql-data:
+
+networks:
+  app-network:
+    driver: bridge

@@ -11,6 +11,13 @@ namespace ProductService.Tests.IntegrationTests.Helpers
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+            builder.UseEnvironment("Testing");
+
+            builder.ConfigureAppConfiguration((context, config) =>
+            {
+                Environment.SetEnvironmentVariable("SKIP_MIGRATION", "true");
+            });
+
             builder.ConfigureServices(services =>
             {
                 var descriptor = services.SingleOrDefault(

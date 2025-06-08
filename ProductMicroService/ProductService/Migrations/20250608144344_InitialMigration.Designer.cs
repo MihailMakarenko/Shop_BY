@@ -12,7 +12,7 @@ using Repository;
 namespace ProductService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250527202801_InitialMigration")]
+    [Migration("20250608144344_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -60,9 +60,7 @@ namespace ProductService.Migrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 

@@ -31,9 +31,7 @@ namespace ProductService.DI
 
         public static void ConfigureIISIntegration(this IServiceCollection services)
         {
-            services.Configure<IISOptions>(options =>
-            {
-            });
+            services.Configure<IISOptions>(options => {});
         }
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)

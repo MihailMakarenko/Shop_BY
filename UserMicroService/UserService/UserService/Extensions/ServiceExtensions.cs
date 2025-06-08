@@ -43,28 +43,21 @@ namespace UserService.Extensions
                 opts => opts.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                 b => b.MigrationsAssembly("UserService")));
 
+            //services.AddDbContext<AppDbContext>(options =>
+            //  options.UseSqlServer(
+            //      configuration.GetConnectionString("DefaultConnection"),
+            //      sqlOptions =>
+            //      {
+            //          sqlOptions.MigrationsAssembly("UserService");
+            //          sqlOptions.EnableRetryOnFailure();
+            //      }));
+
         }
 
         public static void ConfigureRabbitMq(this IServiceCollection services)
         {
             services.AddScoped<IRabbitMqService, RabbitMqService>();
         }
-
-        //public static void ConfigureMassTransit(this IServiceCollection services)
-        //{
-        //    services.AddMassTransit(x =>
-        //    {
-        //        x.AddBus(provider => Bus.Factory.CreateUsingRabbitMq(config =>
-        //        {
-        //            config.UseHealthCheck(provider);
-        //            config.Host(new Uri("rabbitmq://localhost"), h =>
-        //            {
-        //                h.Username("guest");
-        //                h.Password("guest");
-        //            });
-        //        }));
-        //    });
-        //}
 
         public static void ConfigureFluentValidation(this IServiceCollection services)
         {

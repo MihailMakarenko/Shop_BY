@@ -1,10 +1,18 @@
-﻿using RabbitMQ.Client;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
+using RabbitMQ.Client;
 using Service.Contract;
 using System.Text;
 using System.Text.Json;
 
 public class RabbitMqService : IRabbitMqService
 {
+    private readonly IConfiguration _configuration;
+
+    public RabbitMqService(IConfiguration configuration)
+    {
+        _configuration = configuration;
+    }
 
     public async Task SendMessage(object obj, string queue)
     {
@@ -14,7 +22,16 @@ public class RabbitMqService : IRabbitMqService
 
     public async Task SendMessage(string message, string queue)
     {
-        var factory = new ConnectionFactory { HostName = "localhost" };
+        var rabbitSection = _configuration.GetSection($"RabbitMq");
+
+        var factory = new ConnectionFactory
+        {
+            HostName = rabbitSection["Host"]!,
+            Port = int.Parse(rabbitSection["Port"]!),
+            UserName = rabbitSection["UserName"]!,
+            Password = rabbitSection["Password"]!
+        };
+
         using var connection = await factory.CreateConnectionAsync();
         using var channel = await connection.CreateChannelAsync();
 

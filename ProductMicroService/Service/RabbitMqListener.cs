@@ -1,5 +1,5 @@
 ﻿using Contracts;
-
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RabbitMQ.Client;
@@ -9,29 +9,46 @@ using System.Text;
 public class ProductStatusConsumerService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly IConfiguration _configuration;
 
-    public ProductStatusConsumerService(IServiceProvider serviceProvider)
+    public ProductStatusConsumerService(IServiceProvider serviceProvider, IConfiguration configuration)
     {
         _serviceProvider = serviceProvider;
+        _configuration = configuration;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var factory = new ConnectionFactory { HostName = "localhost" };
-        using var connection = await factory.CreateConnectionAsync();
-        using var channel = await connection.CreateChannelAsync();
-
-        await DeclareQueues(channel);
-
-        var activationConsumer = CreateConsumer(channel, ProcessActivationMessage);
-        var deactivationConsumer = CreateConsumer(channel, ProcessDeactivationMessage);
-
-        await channel.BasicConsumeAsync("user.activation", false, activationConsumer);
-        await channel.BasicConsumeAsync("user.deactivation", false, deactivationConsumer);
-
         while (!stoppingToken.IsCancellationRequested)
         {
-            await Task.Delay(1000, stoppingToken);
+            try
+            {
+                var rabbitSection = _configuration.GetSection($"RabbitMq");
+
+                var factory = new ConnectionFactory
+                {
+                    HostName = rabbitSection["Host"]!,
+                    Port = int.Parse(rabbitSection["Port"]!),
+                    UserName = rabbitSection["UserName"]!,
+                    Password = rabbitSection["Password"]!
+                };
+                await using var connection = await factory.CreateConnectionAsync(stoppingToken);
+                await using var channel = await connection.CreateChannelAsync();
+
+                await DeclareQueues(channel);
+
+                var activationConsumer = CreateConsumer(channel, ProcessActivationMessage);
+                var deactivationConsumer = CreateConsumer(channel, ProcessDeactivationMessage);
+
+                await channel.BasicConsumeAsync("user.activation", false, activationConsumer);
+                await channel.BasicConsumeAsync("user.deactivation", false, deactivationConsumer);
+
+                await Task.Delay(Timeout.Infinite, stoppingToken);
+            }
+            catch
+            {
+                await Task.Delay(5000, stoppingToken);
+            }
         }
     }
 

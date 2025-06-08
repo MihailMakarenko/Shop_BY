@@ -9,8 +9,17 @@ namespace UserService.Tests.IntegrationTests.Helpers
 {
     public class Factory<TProgram> : WebApplicationFactory<Program> where TProgram : Program
     {
+
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
+
+            builder.UseEnvironment("Testing");
+
+            builder.ConfigureAppConfiguration((context, config) =>
+            {
+                Environment.SetEnvironmentVariable("SKIP_MIGRATION", "true");
+            });
+
             builder.ConfigureServices(services =>
             {
                 var descriptor = services.SingleOrDefault(

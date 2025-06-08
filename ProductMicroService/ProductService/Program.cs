@@ -1,7 +1,7 @@
+using Microsoft.EntityFrameworkCore;
 using ProductService.Application.ProductFeatures.Queries.GetFilteredSortedProducts;
 using ProductService.DI;
-using Service;
-using Service.Contract;
+using Repository;
 using Sieve.Services;
 
 namespace ProductService
@@ -11,6 +11,12 @@ namespace ProductService
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Configuration
+         .SetBasePath(Directory.GetCurrentDirectory())
+         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+         .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+         .AddEnvironmentVariables();
 
             builder.Services.ConfigureSwagger();
             builder.Services.ConfigureRepositoryManager();
@@ -32,6 +38,19 @@ namespace ProductService
             builder.Services.ConfigureRabbitMqConsumers();
 
             var app = builder.Build();
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+
+                var skipMigration = Environment.GetEnvironmentVariable("SKIP_MIGRATION");
+
+                if (string.IsNullOrEmpty(skipMigration))
+                {
+                    dbContext.Database.Migrate();
+                }
+            }
 
             app.ConfigureExceptionHandler();
 

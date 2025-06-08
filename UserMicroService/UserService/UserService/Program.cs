@@ -3,6 +3,8 @@ using UserService.Extensions;
 using MassTransit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Repository;
+using Microsoft.EntityFrameworkCore;
 
 namespace UserService
 {
@@ -11,6 +13,12 @@ namespace UserService
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Configuration
+           .SetBasePath(Directory.GetCurrentDirectory())
+           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+           .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+           .AddEnvironmentVariables();
 
             builder.Services.ConfigureSwagger();
             builder.Services.ConfigureSqlContext(builder.Configuration);
@@ -24,23 +32,7 @@ namespace UserService
             builder.Services.ConfigureCors();
             builder.Services.ConfigureIISIntegration();
             builder.Services.ConfigureRabbitMq();
-            //builder.Services.AddMassTransit(x =>
-            //{
-            //    x.AddConsumer<TelemetryDataConsumer>();
-            //    x.UsingRabbitMq((context, cfg) =>
-            //    {
-            //        cfg.Host("localhost", "/", host =>
-            //        {
-            //            host.Username("guest");
-            //            host.Password("guest");
-            //        });
-
-            //        cfg.ConfigureEndpoints(context);
-            //    });
-            //});
-
-
-
+       
             builder.Services.AddControllers()
                 .AddNewtonsoftJson()
                 .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
@@ -49,6 +41,18 @@ namespace UserService
 
             var app = builder.Build();
 
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+                var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+
+                var skipMigration = Environment.GetEnvironmentVariable("SKIP_MIGRATION");
+
+                if (string.IsNullOrEmpty(skipMigration))
+                {
+                    dbContext.Database.Migrate();
+                }
+            }
 
             app.ConfigureExceptionHandler();
 
