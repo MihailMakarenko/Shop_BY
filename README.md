@@ -6,5 +6,5 @@
   Выполнено тестирование микросервисов с помощью xUnit, написаны unit и integration тесты. 
   Настроен Docker, в Docker-compose добавлены 5 контейнеров: два микросервиса, две базы данных к каждому микросервису и контейнер для RabbitMq. 
   Микросервисы построенны на Onion архитектуре.
-  Видео в котором демонтрируется работа приложение: 
-  Видео в котором демонстрируется тестирование микросервисов:
+  Видео в котором демонтрируется работа приложение: https://drive.google.com/file/d/1v_6AXlhEV_4apomEG1X-UtVpEFRvpsqi/view?usp=drive_link
+  Видео в котором демонстрируется тестирование микросервисов: https://drive.google.com/file/d/1REFcdJBrvqgBCMB-XU1UGkCNmoPTgkLZ/view?usp=drive_link
