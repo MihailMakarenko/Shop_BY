@@ -93,6 +93,9 @@ namespace UserService.Migrations
                         .HasColumnType("nvarchar(256)")
                         .HasComputedColumnSql("[Email]");
 
+                    b.Property<bool>("isBlocked")
+                        .HasColumnType("bit");
+
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
@@ -124,7 +127,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79161234567",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "5b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "ivanov@example.com"
+                            UserName = "ivanov@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -141,7 +145,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79162345678",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "6b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "petrov@example.com"
+                            UserName = "petrov@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -158,7 +163,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79163456789",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "7b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "sergeev@example.com"
+                            UserName = "sergeev@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -175,7 +181,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79164567890",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "8b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "andreeva@example.com"
+                            UserName = "andreeva@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -192,7 +199,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79165678901",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "9b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "mihailova@example.com"
+                            UserName = "mihailova@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -209,7 +217,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79166789012",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "0c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "alekseev@example.com"
+                            UserName = "alekseev@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -226,7 +235,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79167890123",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "1c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "olegova@example.com"
+                            UserName = "olegova@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -243,7 +253,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79168901234",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "2c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "dmitriev@example.com"
+                            UserName = "dmitriev@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -260,7 +271,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79169012345",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "3c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "evgenevna@example.com"
+                            UserName = "evgenevna@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -277,7 +289,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79160123456",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "4c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "nikolaev@example.com"
+                            UserName = "nikolaev@example.com",
+                            isBlocked = false
                         });
                 });
 

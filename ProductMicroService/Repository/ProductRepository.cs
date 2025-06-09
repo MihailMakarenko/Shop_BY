@@ -13,6 +13,7 @@ namespace Repository
         public void CreateProduct(Guid userId, Product product)
         {
             product.CreatedByUserId = userId.ToString();
+            product.IsAvailable = true;
             Create(product);
 
         }

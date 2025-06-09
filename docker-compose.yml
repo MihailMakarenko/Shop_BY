@@ -75,6 +75,7 @@ services:
       - "5002:82"
     environment:
       - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_URLS=http://+:82
     depends_on:
       rabbitmq:
         condition: service_healthy

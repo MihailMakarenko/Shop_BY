@@ -40,6 +40,7 @@ namespace UserService.Tests.IntegrationTests.Helpers
                 SecurityStamp = "5b442d41-f7b2-4d1b-a4cb-45d79822923f",
                 TwoFactorEnabled = false,
                 EmailConfirmToken = "11111111-2222-3333-4444-555555555555",
+                isBlocked = false,
             },
             new User
             {
@@ -59,7 +60,8 @@ namespace UserService.Tests.IntegrationTests.Helpers
                 RefreshToken = null,
                 RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                 SecurityStamp = "6b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                TwoFactorEnabled = false
+                TwoFactorEnabled = false,
+                isBlocked = false
             },
             new User
             {
@@ -79,7 +81,8 @@ namespace UserService.Tests.IntegrationTests.Helpers
                 RefreshToken = null,
                 RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                 SecurityStamp = "7b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                TwoFactorEnabled = false
+                TwoFactorEnabled = false,
+                isBlocked = false,
             },
             });
             appDbContext.SaveChanges();

@@ -14,7 +14,7 @@ namespace Service
         {
             var userEntity = await GetAndCheckUserIfExists(userId, trackChanges);
 
-            userEntity.LockoutEnabled = true;
+            userEntity.isBlocked = true;
 
             await _mqService.SendMessage(userId.ToString(), "user.deactivation");
 
@@ -25,7 +25,7 @@ namespace Service
         {
             var userEntity = await GetAndCheckUserIfExists(userId, trackChanges);
 
-            userEntity.LockoutEnabled = false;
+            userEntity.isBlocked = false;
 
             await _mqService.SendMessage(userId.ToString(), "user.activation");
 

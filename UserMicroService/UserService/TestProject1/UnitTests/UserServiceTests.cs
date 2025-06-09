@@ -5,6 +5,7 @@ using Entities.Exceptions.UsersException;
 using Entities.Models;
 using FluentAssertions;
 using Moq;
+using Service.Contract;
 using Shared.DataTransferObjects.UserDto;
 
 namespace UserService.Tests.UnitTests
@@ -14,6 +15,7 @@ namespace UserService.Tests.UnitTests
         private readonly Mock<IRepositoryManager> _repositoryManagerMock;
         private readonly Mock<IMapper> _mapperMock;
         private readonly Service.UserService _userService;
+        private readonly Mock<IRabbitMqService> _rabbitMqServiceMock;
 
         private readonly User _user;
         private readonly UserDto _userDto;
@@ -25,7 +27,8 @@ namespace UserService.Tests.UnitTests
         {
             _repositoryManagerMock = new Mock<IRepositoryManager>();
             _mapperMock = new Mock<IMapper>();
-            _userService = new Service.UserService(_repositoryManagerMock.Object, _mapperMock.Object);
+            _rabbitMqServiceMock = new Mock<IRabbitMqService>();
+            _userService = new Service.UserService(_repositoryManagerMock.Object, _mapperMock.Object, _rabbitMqServiceMock.Object);
 
             _user = new User()
             {

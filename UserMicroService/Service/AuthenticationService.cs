@@ -45,9 +45,8 @@ namespace Service
         {
             var user = _mapper.Map<User>(userForRegistrartion);
             user.EmailConfirmToken = emailToken;
-            user.LockoutEnabled = false;
+            user.isBlocked = false;
             var result = await _userManager.CreateAsync(user, userForRegistrartion.Password!);
-
 
             if (result.Succeeded)
                 await AddToRolesIfExist(user, userForRegistrartion);
@@ -59,7 +58,7 @@ namespace Service
         {
             _user = await _userManager.FindByEmailAsync(userForAuth.Email!);
 
-            var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password!));
+            var result = (_user != null && await _userManager.CheckPasswordAsync(_user, userForAuth.Password!) && _user.isBlocked == false);
 
             return result;
         }

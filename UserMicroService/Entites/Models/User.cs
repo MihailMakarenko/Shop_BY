@@ -10,6 +10,7 @@ namespace Entities.Models
         public string? RefreshToken { get; set; }
         public DateTime RefreshTokenExpiryTime { get; set; }
         public string? EmailConfirmToken { get; set; }
+        public bool isBlocked { get; set; }
 
         [NotMapped]
         public override bool TwoFactorEnabled { get; set; }

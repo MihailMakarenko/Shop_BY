@@ -12,8 +12,8 @@ using Repository;
 namespace UserService.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250525154119_ChangeUserModelAddResetPassword")]
-    partial class ChangeUserModelAddResetPassword
+    [Migration("20250608164335_ChangeIsBlocked")]
+    partial class ChangeIsBlocked
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,8 +66,11 @@ namespace UserService.Migrations
                         .HasComputedColumnSql("UPPER([Email])");
 
                     b.Property<string>("NormalizedUserName")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasComputedColumnSql("UPPER([Email])");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -83,21 +86,18 @@ namespace UserService.Migrations
                     b.Property<DateTime>("RefreshTokenExpiryTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ResetPasswordToken")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("ResetPasswordTokenExpiry")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Role")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasMaxLength(256)
-                        .HasColumnType("nvarchar(256)");
+                        .HasColumnType("nvarchar(256)")
+                        .HasComputedColumnSql("[Email]");
+
+                    b.Property<bool>("isBlocked")
+                        .HasColumnType("bit");
 
                     b.HasKey("Id");
 
@@ -110,12 +110,7 @@ namespace UserService.Migrations
 
                     b.HasIndex("NormalizedUserName")
                         .IsUnique()
-                        .HasDatabaseName("UserNameIndex")
-                        .HasFilter("[NormalizedUserName] IS NOT NULL");
-
-                    b.HasIndex("PhoneNumber")
-                        .IsUnique()
-                        .HasFilter("[PhoneNumber] IS NOT NULL");
+                        .HasDatabaseName("UserNameIndex");
 
                     b.ToTable("AspNetUsers", (string)null);
 
@@ -135,7 +130,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79161234567",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "5b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "ivanov@example.com"
+                            UserName = "ivanov@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -152,7 +148,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79162345678",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "6b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "petrov@example.com"
+                            UserName = "petrov@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -169,7 +166,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79163456789",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "7b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "sergeev@example.com"
+                            UserName = "sergeev@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -186,7 +184,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79164567890",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "8b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "andreeva@example.com"
+                            UserName = "andreeva@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -203,7 +202,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79165678901",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "9b442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "mihailova@example.com"
+                            UserName = "mihailova@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -220,7 +220,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79166789012",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "0c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "alekseev@example.com"
+                            UserName = "alekseev@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -237,7 +238,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79167890123",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "1c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "olegova@example.com"
+                            UserName = "olegova@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -254,7 +256,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79168901234",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "2c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "dmitriev@example.com"
+                            UserName = "dmitriev@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -271,7 +274,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79169012345",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "3c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "evgenevna@example.com"
+                            UserName = "evgenevna@example.com",
+                            isBlocked = false
                         },
                         new
                         {
@@ -288,7 +292,8 @@ namespace UserService.Migrations
                             PhoneNumber = "+79160123456",
                             RefreshTokenExpiryTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             SecurityStamp = "4c442d41-f7b2-4d1b-a4cb-45d79822923f",
-                            UserName = "nikolaev@example.com"
+                            UserName = "nikolaev@example.com",
+                            isBlocked = false
                         });
                 });
 
@@ -317,6 +322,20 @@ namespace UserService.Migrations
                         .HasFilter("[NormalizedName] IS NOT NULL");
 
                     b.ToTable("AspNetRoles", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "1",
+                            Name = "User",
+                            NormalizedName = "USER"
+                        },
+                        new
+                        {
+                            Id = "2",
+                            Name = "Admin",
+                            NormalizedName = "ADMIN"
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

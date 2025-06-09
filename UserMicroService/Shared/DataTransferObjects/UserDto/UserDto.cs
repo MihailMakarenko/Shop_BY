@@ -9,5 +9,6 @@
         public string? PhoneNumber { get; init; }
 
         public string? FullName { get; init; }
+        public bool isBlocked { get; init; }
     }
 }

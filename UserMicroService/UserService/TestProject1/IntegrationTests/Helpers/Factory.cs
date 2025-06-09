@@ -37,7 +37,7 @@ namespace UserService.Tests.IntegrationTests.Helpers
 
                 services.AddDbContext<AppDbContext>(options =>
                 {
-                    options.UseSqlServer("Server=localhost;Database=db_userTest7;Trusted_Connection=True;TrustServerCertificate=True;");
+                    options.UseSqlServer("Server=localhost;Database=db_userTest8;Trusted_Connection=True;TrustServerCertificate=True;");
                 });
 
                 using var scope = services.BuildServiceProvider().CreateScope();

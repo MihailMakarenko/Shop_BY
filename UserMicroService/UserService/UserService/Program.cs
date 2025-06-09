@@ -1,10 +1,6 @@
-using MassTransit;
-using UserService.Extensions;
-using MassTransit;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Repository;
 using Microsoft.EntityFrameworkCore;
+using Repository;
+using UserService.Extensions;
 
 namespace UserService
 {
@@ -32,7 +28,7 @@ namespace UserService
             builder.Services.ConfigureCors();
             builder.Services.ConfigureIISIntegration();
             builder.Services.ConfigureRabbitMq();
-       
+
             builder.Services.AddControllers()
                 .AddNewtonsoftJson()
                 .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
