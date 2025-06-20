@@ -1,7 +1,13 @@
-﻿using FluentValidation;
+﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Service.Commands.ProductCommands.CreateProduct;
+using Service.Commands.ProductCommands.DeleteProduct;
+using Service.Commands.ProductCommands.UpdateProduct;
 using Service.Contract;
+using Service.Queries.ProductQueries.GetAllProducts;
+using Service.Queries.ProductQueries.GetProductForUser;
+using Service.Queries.ProductQueries.GetProductsForUser;
 using Shared.DataTransferObjects.ProductDto;
 using Sieve.Models;
 using System.Security.Claims;
@@ -11,16 +17,17 @@ namespace ProductService.Presentation.Controllers
     [Authorize]
     [Route("api/users/{userId}/products")]
     [ApiController]
-    public class ProductsController(IServiceManager _serviceManager, IValidator<ProductForCreationDto> _createValidator, IValidator<ProductForUpdateDto> _updateValidator) : ControllerBase
+    public class ProductsController(IMediator _mediator) : ControllerBase
     {
+
         [HttpDelete("{id:guid}", Name = "DeleteProduct")]
         public async Task<IActionResult> DeleteProductForUser(Guid id, Guid userId)
         {
             if (!await CanAccessUserAsync(User, userId))
                 return Forbid();
 
-            await _serviceManager.ProductService.DeleteProductForUser(id, userId, trackChanges: false);
-
+            await _mediator.Send(new DeleteProductCommand(userId, id));
+            
             return NoContent();
         }
 
@@ -30,17 +37,15 @@ namespace ProductService.Presentation.Controllers
             if (!await CanAccessUserAsync(User, userId))
                 return Forbid();
 
-            _createValidator.ValidateAndThrow(productForCreation);
+            var result = await _mediator.Send(new CreateProductCommand(userId, productForCreation));
 
-            var productToReturn = await _serviceManager.ProductService.CreateProductForUser(userId, productForCreation, trackChanges: false);
-
-            return CreatedAtRoute("GetProductForUser", new { userId, id = productToReturn.Id }, productToReturn);
+            return CreatedAtRoute("GetProductForUser", new { userId, id = result.Id }, result);
         }
 
         [HttpGet("{id:guid}", Name = "GetProductForUser")]
         public async Task<IActionResult> GetProductForUser(Guid id, Guid userId)
         {
-            var product = await _serviceManager.ProductService.GetProductByUserAsync(id, userId, trackChanges: false);
+            var product = await _mediator.Send(new GetProductForUserQuery(id, userId));
 
             return Ok(product);
         }
@@ -48,8 +53,8 @@ namespace ProductService.Presentation.Controllers
         [HttpGet(Name = "GetProductsForUser")]
         public async Task<IActionResult> GetProductsForUser(Guid userId, [FromQuery] SieveModel sieveModel)
         {
-            var products = await _serviceManager.ProductService.GetProductsByUserAsync(userId, sieveModel, trackChanges: false);
-
+            var products = await _mediator.Send(new GetProductsForUserQuery(userId, sieveModel));
+            
             return Ok(products);
         }
 
@@ -57,7 +62,7 @@ namespace ProductService.Presentation.Controllers
         [HttpGet("/api/products", Name = "GetAllProducts")]
         public async Task<IActionResult> GetAllProducts([FromQuery] SieveModel sieveModel)
         {
-            var products = await _serviceManager.ProductService.GetAllProducts(sieveModel, trackChanges: false);
+            var products = await _mediator.Send(new GetAllProductsQuery(sieveModel));
 
             return Ok(products);
         }
@@ -65,12 +70,10 @@ namespace ProductService.Presentation.Controllers
         [HttpPut("{id:guid}", Name = "UpdateProductForUser")]
         public async Task<IActionResult> UpdateProductForUser(Guid id, Guid userId, [FromBody] ProductForUpdateDto productForUpdate)
         {
-            if(!await CanAccessUserAsync(User, userId))
+            if (!await CanAccessUserAsync(User, userId))
                 return Forbid();
-            
-            _updateValidator.ValidateAndThrow(productForUpdate);
 
-            await _serviceManager.ProductService.UpdateProductForUser(id, userId, productForUpdate, trackChanges: true);
+            await _mediator.Send(new UpdateProductCommand(id, userId, productForUpdate));
 
             return NoContent();
         }

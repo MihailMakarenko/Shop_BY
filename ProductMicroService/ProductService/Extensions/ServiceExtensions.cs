@@ -2,7 +2,6 @@
 using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Repository;
@@ -31,7 +30,7 @@ namespace ProductService.DI
 
         public static void ConfigureIISIntegration(this IServiceCollection services)
         {
-            services.Configure<IISOptions>(options => {});
+            services.Configure<IISOptions>(options => { });
         }
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)

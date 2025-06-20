@@ -1,7 +1,11 @@
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using ProductService.Application.ProductFeatures.Queries.GetFilteredSortedProducts;
 using ProductService.DI;
 using Repository;
+using Service.Behavior;
+using Service.Commands.ProductCommands.CreateProduct;
+using Service.Commands.ProductCommands.UpdateProduct;
 using Sieve.Services;
 
 namespace ProductService
@@ -13,16 +17,27 @@ namespace ProductService
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Configuration
-         .SetBasePath(Directory.GetCurrentDirectory())
-         .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-         .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-         .AddEnvironmentVariables();
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+
+            builder.Services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssembly(typeof(Program).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(UpdateProductCommand).Assembly);
+                cfg.RegisterServicesFromAssembly(typeof(CreateProductCommand).Assembly);
+            });
+
+            builder.Services.AddAutoMapper(typeof(Program));
+
+            builder.Services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 
             builder.Services.ConfigureSwagger();
             builder.Services.ConfigureRepositoryManager();
             builder.Services.ConfigureServiceManager();
-            builder.Services.AddAutoMapper(typeof(Program));
             builder.Services.ConfigureFluentValidation();
+
             builder.Services.AddControllers()
                 .AddNewtonsoftJson()
                 .AddApplicationPart(typeof(Presentation.AssemblyReference).Assembly);
@@ -34,7 +49,6 @@ namespace ProductService
             builder.Services.ConfigureSqlContext(builder.Configuration);
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddScoped<ISieveProcessor, SieveProcessor>();
-
             builder.Services.ConfigureRabbitMqConsumers();
 
             var app = builder.Build();
@@ -42,8 +56,6 @@ namespace ProductService
             using (var scope = app.Services.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                var env = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
-
                 var skipMigration = Environment.GetEnvironmentVariable("SKIP_MIGRATION");
 
                 if (string.IsNullOrEmpty(skipMigration))
@@ -53,7 +65,6 @@ namespace ProductService
             }
 
             app.ConfigureExceptionHandler();
-
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
@@ -67,7 +78,6 @@ namespace ProductService
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
-
             app.Run();
         }
     }
